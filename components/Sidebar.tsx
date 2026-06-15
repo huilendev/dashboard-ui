@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { label: "Overview", href: "/" },
@@ -12,11 +13,30 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+  }, [dark]);
 
   return (
-    <aside className="w-60 shrink-0 border-r border-gray-200 bg-white flex flex-col h-full">
-      <div className="px-6 py-5 border-b border-gray-200">
-        <span className="text-lg font-semibold text-gray-900">Dashboard</span>
+    <aside
+      className="w-60 shrink-0 flex flex-col h-full transition-colors duration-200"
+      style={{
+        background: "var(--sidebar-bg)",
+        borderRight: "1px solid var(--sidebar-border)",
+      }}
+    >
+      <div
+        className="px-6 py-5"
+        style={{ borderBottom: "1px solid var(--sidebar-border)" }}
+      >
+        <span
+          className="text-lg font-semibold"
+          style={{ color: "var(--sidebar-text-strong)" }}
+        >
+          Dashboard
+        </span>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-0.5">
@@ -26,11 +46,29 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              className="flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              style={
                 active
-                  ? "bg-indigo-50 text-indigo-700"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-              }`}
+                  ? {
+                      background: "var(--sidebar-active-bg)",
+                      color: "var(--sidebar-active-text)",
+                    }
+                  : {
+                      color: "var(--sidebar-text)",
+                    }
+              }
+              onMouseEnter={(e) => {
+                if (!active) {
+                  e.currentTarget.style.background = "var(--sidebar-hover-bg)";
+                  e.currentTarget.style.color = "var(--sidebar-text-strong)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!active) {
+                  e.currentTarget.style.background = "";
+                  e.currentTarget.style.color = "var(--sidebar-text)";
+                }
+              }}
             >
               {item.label}
             </Link>
@@ -38,16 +76,53 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="px-4 py-4 border-t border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-medium text-sm">
+      <div
+        className="px-4 py-4"
+        style={{ borderTop: "1px solid var(--sidebar-border)" }}
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center font-medium text-sm"
+            style={{
+              background: "var(--sidebar-active-bg)",
+              color: "var(--sidebar-active-text)",
+            }}
+          >
             H
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">Huilen</p>
-            <p className="text-xs text-gray-500 truncate">huilenvilches@gmail.com</p>
+            <p
+              className="text-sm font-medium truncate"
+              style={{ color: "var(--sidebar-text-strong)" }}
+            >
+              Huilen
+            </p>
+            <p
+              className="text-xs truncate"
+              style={{ color: "var(--sidebar-text-muted)" }}
+            >
+              huilenvilches@gmail.com
+            </p>
           </div>
         </div>
+
+        <button
+          onClick={() => setDark((d) => !d)}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors"
+          style={{
+            color: "var(--sidebar-text)",
+            background: "transparent",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--sidebar-hover-bg)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+          }}
+        >
+          <span>{dark ? "Light mode" : "Dark mode"}</span>
+          <span className="text-base">{dark ? "☀️" : "🌙"}</span>
+        </button>
       </div>
     </aside>
   );

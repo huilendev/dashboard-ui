@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 const navItems = [
   { label: "Overview", href: "/" },
@@ -13,11 +13,7 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-  }, [dark]);
+  const { dark, toggleDark } = useTheme();
 
   return (
     <aside
@@ -107,7 +103,7 @@ export default function Sidebar() {
         </div>
 
         <button
-          onClick={() => setDark((d) => !d)}
+          onClick={toggleDark}
           className="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors"
           style={{
             color: "var(--sidebar-text)",
